@@ -1,0 +1,38 @@
+# ==========================================
+# .cursorignore - 告诉 Cursor AI 不要读取这些文件
+# ==========================================
+
+# 1. 缓存与编译产物 (AI 不需要读字节码)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 2. 爬虫下载的史料与文档 (防止 AI 读取巨量 PDF 导致 Token 爆炸)
+JACAR_Downloads/
+*.pdf
+*.zip
+*.gz
+
+# 3. OCR 识别缓存 (AI 不需要读那些生成的纯文本历史文件)
+OCR_Cache/
+*.txt
+
+# 4. 敏感配置文件 (防止 AI 将你的 API Key 作为上下文发送)
+.secrets/
+api_config.json
+
+# 5. 代码备份与副本 (非常重要！防止 AI 读取两份相似代码导致上下文错乱)
+*副本.py
+*_副本.py
+*.bak
+
+# 6. 虚拟环境与 IDE 配置文件
+.venv/
+venv/
+env/
+.vscode/
+.idea/
+
+# 7. 系统默认文件
+.DS_Store

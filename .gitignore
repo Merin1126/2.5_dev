@@ -1,0 +1,42 @@
+# ==========================================
+# .gitignore - 防止不必要/敏感文件上传至 GitHub
+# ==========================================
+
+# 1. 敏感密钥文件 (最高优先级！)
+# 防止你申请的 Google Vision API Key / Gemini API Key 泄露
+.secrets/
+api_config.json
+
+# 2. 本地产生的数据文件 (避免仓库变得非常大)
+JACAR_Downloads/
+OCR_Cache/
+*.pdf
+*.txt
+*.zip
+*.gz
+
+# 3. Python 缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 4. 虚拟环境目录 (环境依赖应该通过 requirements.txt 管理)
+.venv/
+venv/
+env/
+ENV/
+
+# 5. 编辑器、IDE 和系统配置
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 6. 本地临时备份文件
+*副本.py
+*_副本.py
+*.bak
+*.tmp
+
+# 7. 日志文件
+*.log
