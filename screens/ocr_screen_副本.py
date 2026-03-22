@@ -10,10 +10,11 @@ from docx import Document
 
 # 导入咱们的高级 UI 组件 (确保路径正确)
 from components.ui.button import Button
+from config.settings import Color
 
 class OCRScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, fg_color="transparent", **kwargs)
+        super().__init__(master, fg_color=Color.TRANSPARENT, **kwargs)
         self.master = master
         
         # 自动定位下载文件夹
@@ -41,7 +42,7 @@ class OCRScreen(ctk.CTkFrame):
         self.paned_window = tk.PanedWindow(
             self, 
             orient="horizontal", 
-            bg="#1a1a1a",              # 背景色：设置深灰以匹配暗色主题，这也将是分割线的颜色
+            bg=Color.BG_MAIN_DARK,              # 背景色：设置深灰以匹配暗色主题，这也将是分割线的颜色
             sashwidth=8,               # 分割线宽度：8 个像素，既不突兀又容易用鼠标抓住
             sashrelief="flat",         # 分割线样式：扁平化，更有现代感
             sashcursor="sb_h_double_arrow", # 鼠标变成左右拖拽的双箭头图标
@@ -56,7 +57,7 @@ class OCRScreen(ctk.CTkFrame):
         
         ctk.CTkLabel(self.left_frame, text="📁 史料文件库", font=("Arial", 16, "bold")).pack(pady=10)
         
-        list_container = ctk.CTkFrame(self.left_frame, fg_color="transparent")
+        list_container = ctk.CTkFrame(self.left_frame, fg_color=Color.TRANSPARENT)
         list_container.pack(fill="both", expand=True, padx=5, pady=5)
         
         self.v_scrollbar = ctk.CTkScrollbar(list_container, orientation="vertical")
@@ -66,7 +67,7 @@ class OCRScreen(ctk.CTkFrame):
             list_container, 
             yscrollcommand=self.v_scrollbar.set,
             xscrollcommand=self.h_scrollbar.set,
-            bg="#2b2b2b", fg="white", selectbackground="#1F6AA5",
+            bg=Color.BG_PANEL, fg=Color.TEXT_WHITE, selectbackground=Color.PRIMARY,
             font=("Arial", 12), borderwidth=0, highlightthickness=0
         )
         
@@ -78,7 +79,7 @@ class OCRScreen(ctk.CTkFrame):
         self.file_listbox.pack(side="left", fill="both", expand=True)
         self.file_listbox.bind('<<ListboxSelect>>', self.on_file_select)
 
-        list_action_frame = ctk.CTkFrame(self.left_frame, fg_color="transparent")
+        list_action_frame = ctk.CTkFrame(self.left_frame, fg_color=Color.TRANSPARENT)
         list_action_frame.pack(fill="x", padx=8, pady=(0, 10))
 
         Button(
@@ -100,7 +101,7 @@ class OCRScreen(ctk.CTkFrame):
         # PDF 区域是视觉重点，最小宽度给大一点
         self.paned_window.add(self.mid_frame, minsize=400, stretch="always")
         
-        toolbar = ctk.CTkFrame(self.mid_frame, fg_color="transparent")
+        toolbar = ctk.CTkFrame(self.mid_frame, fg_color=Color.TRANSPARENT)
         toolbar.pack(fill="x", pady=5, padx=5)
         
         Button(toolbar, text="➖ 缩小", width=60, height=30, command=self.zoom_out).pack(side="left", padx=5)
@@ -112,7 +113,7 @@ class OCRScreen(ctk.CTkFrame):
         Button(toolbar, text="◀ 上一页", width=80, height=30, command=self.prev_page).pack(side="left", padx=5)
         Button(toolbar, text="▶ 下一页", width=80, height=30, command=self.next_page).pack(side="left", padx=5)
         
-        self.canvas = tk.Canvas(self.mid_frame, bg="#2b2b2b", highlightthickness=0, cursor="hand2")
+        self.canvas = tk.Canvas(self.mid_frame, bg=Color.BG_PANEL, highlightthickness=0, cursor="hand2")
         self.canvas.pack(fill="both", expand=True, padx=5, pady=5)
         
         self.canvas.bind("<ButtonPress-1>", self.on_drag_start)
@@ -131,7 +132,7 @@ class OCRScreen(ctk.CTkFrame):
         
         self.btn_export = Button(
             self.right_frame, text="💾 确认并导出文档", 
-            fg_color="#1F6AA5", hover_color="#144870",
+            fg_color=Color.PRIMARY, hover_color=Color.PRIMARY_HOVER,
             width=200, height=45, command=self.export_document
         )
         self.btn_export.pack(pady=15, padx=10, fill="x")

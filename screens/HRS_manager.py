@@ -2,6 +2,7 @@ from screens.scraper_screen import ScraperScreen
 from screens.ocr_screen import OCRScreen  # <-- 新增这行！
 from screens.setting_screen import SettingScreen
 import customtkinter as ctk
+from config.settings import Color
 
 
 # ==========================================
@@ -9,13 +10,13 @@ import customtkinter as ctk
 # ==========================================
 class DummyScraperScreen(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, fg_color="transparent")
-        ctk.CTkLabel(self, text="🚀 史料高并发抓取页面 (开发中...)", font=("Arial", 24, "bold"), text_color="#28a745").pack(expand=True)
+        super().__init__(master, fg_color=Color.TRANSPARENT)
+        ctk.CTkLabel(self, text="🚀 史料高并发抓取页面 (开发中...)", font=("Arial", 24, "bold"), text_color=Color.BTN_SUCCESS_ALT).pack(expand=True)
 
 class DummyOCRScreen(ctk.CTkFrame):
     def __init__(self, master):
-        super().__init__(master, fg_color="transparent")
-        ctk.CTkLabel(self, text="👁️ 史料 OCR 校对页面 (开发中...)", font=("Arial", 24, "bold"), text_color="#1F6AA5").pack(expand=True)
+        super().__init__(master, fg_color=Color.TRANSPARENT)
+        ctk.CTkLabel(self, text="👁️ 史料 OCR 校对页面 (开发中...)", font=("Arial", 24, "bold"), text_color=Color.PRIMARY).pack(expand=True)
 
 # ==========================================
 # 👑 屏幕大管家 (Screen Manager)
@@ -23,7 +24,7 @@ class DummyOCRScreen(ctk.CTkFrame):
 class ScreenManager(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         # 设置透明背景让它融入主窗口
-        super().__init__(master, fg_color="transparent", corner_radius=0, **kwargs)
+        super().__init__(master, fg_color=Color.TRANSPARENT, corner_radius=0, **kwargs)
         self.master = master
         
         # 初始化所有子页面

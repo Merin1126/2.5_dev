@@ -1,6 +1,7 @@
 import threading
 import customtkinter as ctk
 from tkinter import messagebox
+from config.settings import Color
 
 # 导入咱们刚移植过来的高级 UI 组件
 from components.ui.button import Button
@@ -12,7 +13,7 @@ import core_scraper
 class ScraperScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         # 继承大管家的透明背景
-        super().__init__(master, fg_color="transparent", **kwargs)
+        super().__init__(master, fg_color=Color.TRANSPARENT, **kwargs)
         self.master = master
         self.stop_event = threading.Event()
 
@@ -42,27 +43,27 @@ class ScraperScreen(ctk.CTkFrame):
         self.entry_end_year.pack()
 
         # ================= 操作按钮区 =================
-        btn_frame = ctk.CTkFrame(container, fg_color="transparent")
+        btn_frame = ctk.CTkFrame(container, fg_color=Color.TRANSPARENT)
         btn_frame.pack(pady=35)
 
         # 使用你刚移植的高级 Button 组件
         self.btn_start = Button(
             btn_frame, text="🚀 开始抓取", width=160, 
-            fg_color="#28a745", hover_color="#218838", 
+            fg_color=Color.BTN_SUCCESS_ALT, hover_color=Color.BTN_SUCCESS_ALT_HOVER, 
             command=self.start_scraping_thread
         )
         self.btn_start.pack(side="left", padx=20)
 
         self.btn_stop = Button(
             btn_frame, text="🛑 停止抓取", width=160, 
-            fg_color="#dc3545", hover_color="#c82333", 
+            fg_color=Color.BTN_DANGER, hover_color=Color.BTN_DANGER_HOVER, 
             command=self.stop_scraping
         )
         self.btn_stop.configure(state="disabled") # 初始状态禁用
         self.btn_stop.pack(side="left", padx=20)
 
         # ================= 状态与进度条区 =================
-        self.lbl_status = ctk.CTkLabel(container, text="等待分配任务...", text_color="gray", font=("Arial", 13))
+        self.lbl_status = ctk.CTkLabel(container, text="等待分配任务...", text_color=Color.TEXT_MUTED, font=("Arial", 13))
         self.lbl_status.pack(pady=(10, 5))
 
         self.progress_bar = ctk.CTkProgressBar(container, width=500, height=12, corner_radius=6)
@@ -81,7 +82,7 @@ class ScraperScreen(ctk.CTkFrame):
 
     def finish_scraping(self, message="🎉 任务圆满完成！所有文件已下载。"):
         def _finish():
-            self.lbl_status.configure(text=message, text_color="green")
+            self.lbl_status.configure(text=message, text_color=Color.TEXT_SUCCESS)
             self.btn_start.configure(state="normal")
             self.btn_stop.configure(state="disabled")
             messagebox.showinfo("提示", message)
@@ -89,7 +90,7 @@ class ScraperScreen(ctk.CTkFrame):
 
     def stop_scraping(self):
         self.stop_event.set()
-        self.lbl_status.configure(text="🛑 收到停止指令，正在等待所有线程安全退出...", text_color="orange")
+        self.lbl_status.configure(text="🛑 收到停止指令，正在等待所有线程安全退出...", text_color=Color.TEXT_WARNING)
         self.btn_stop.configure(state="disabled")
 
     def start_scraping_thread(self):
@@ -105,7 +106,7 @@ class ScraperScreen(ctk.CTkFrame):
         self.stop_event.clear()
         self.btn_start.configure(state="disabled")
         self.btn_stop.configure(state="normal")
-        self.lbl_status.configure(text="🚀 正在启动浏览器并连接数据库...", text_color="#1F6AA5")
+        self.lbl_status.configure(text="🚀 正在启动浏览器并连接数据库...", text_color=Color.PRIMARY)
         self.progress_bar.set(0)
 
         # 启动后台爬虫线程

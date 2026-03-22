@@ -3,6 +3,7 @@ import os
 from tkinter import messagebox
 
 from components.ui.button import Button
+from config.settings import Color
 from config.api_key_store import (
     load_google_api_key,
     save_google_api_key,
@@ -13,7 +14,7 @@ from config.api_key_store import (
 
 class SettingScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, fg_color="transparent", **kwargs)
+        super().__init__(master, fg_color=Color.TRANSPARENT, **kwargs)
         self.master = master
         self._setup_ui()
         self._load_config()
@@ -63,8 +64,8 @@ class SettingScreen(ctk.CTkFrame):
             text="清空 API Key",
             width=180,
             height=40,
-            fg_color="#b45309",
-            hover_color="#92400e",
+            fg_color=Color.BTN_WARNING,
+            hover_color=Color.BTN_WARNING_HOVER,
             command=self.clear_api_key
         ).pack(anchor="w", padx=16, pady=(0, 10))
 
@@ -72,7 +73,7 @@ class SettingScreen(ctk.CTkFrame):
             container,
             text="建议：优先使用环境变量；若必须本地保存，请不要共享项目目录与 .secrets 文件。",
             font=("Arial", 12),
-            text_color=("#444444", "#b0b0b0")
+            text_color=Color.TEXT_HINT_TUPLE
         ).pack(anchor="w", padx=16, pady=(2, 16))
 
     def _load_config(self):

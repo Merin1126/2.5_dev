@@ -1,9 +1,10 @@
 import customtkinter as ctk
+from config.settings import Color
 
 class Navigation(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         # 继承原作者的深色导航栏风格
-        super().__init__(master, width=84, corner_radius=0, fg_color="#212121", **kwargs)
+        super().__init__(master, width=84, corner_radius=0, fg_color=Color.BG_NAV_DARK, **kwargs)
         self.master = master
         self.expanded_width = 200
         self.collapsed_width = 84
@@ -23,25 +24,25 @@ class Navigation(ctk.CTkFrame):
         self.pack_propagate(False)
 
         # ================= 顶部 Logo/标题区 =================
-        self.title_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.title_container = ctk.CTkFrame(self, fg_color=Color.TRANSPARENT)
         self.title_container.pack(pady=(34, 20), padx=10)
 
         self.title_label = ctk.CTkLabel(
             self.title_container, text="HRS",
-            font=("Arial", 26, "bold"), text_color="white", cursor="hand2"
+            font=("Arial", 26, "bold"), text_color=Color.TEXT_WHITE, cursor="hand2"
         )
         self.title_label.pack()
         self.title_label.bind("<Button-1>", self.toggle_navigation)
 
         self.version_label = ctk.CTkLabel(
             self.title_container, text="V2.2",
-            font=("Arial", 11), text_color="gray"
+            font=("Arial", 11), text_color=Color.TEXT_MUTED
         )
         self.version_label.pack(pady=(2, 0))
         self.version_label.bind("<Button-1>", self.toggle_navigation)
 
         # ================= 中间 导航按钮区 =================
-        self.nav_btn_container = ctk.CTkFrame(self, fg_color="transparent")
+        self.nav_btn_container = ctk.CTkFrame(self, fg_color=Color.TRANSPARENT)
         self.nav_btn_container.pack(fill="x", padx=10, pady=(0, 8))
 
         for item in self.nav_config:
@@ -49,11 +50,11 @@ class Navigation(ctk.CTkFrame):
                 self.nav_btn_container,
                 text=item["icon"],
                 font=("Arial", 18),
-                fg_color="transparent",
-                text_color="gray",
-                hover_color="#333333",
+                fg_color=Color.TRANSPARENT,
+                text_color=Color.TEXT_MUTED,
+                hover_color=Color.BG_HOVER,
                 height=44,
-                corner_radius=8,
+                corner_radius=14,
                 anchor="center",
                 command=lambda screen=item["screen"]: self.on_nav_item_click(screen)
             )
@@ -65,7 +66,7 @@ class Navigation(ctk.CTkFrame):
         self.appearance_mode_menu = ctk.CTkOptionMenu(
             self, values=["System", "Dark", "Light"],
             command=self.change_appearance_mode_event,
-            fg_color="#333333", button_color="#1F6AA5"
+            fg_color=Color.BG_HOVER, button_color=Color.PRIMARY
         )
         self.appearance_mode_menu.pack(side="bottom", pady=30, padx=15, fill="x")
         self.appearance_mode_menu.pack_forget()
@@ -82,11 +83,11 @@ class Navigation(ctk.CTkFrame):
 
         # 1. 重置所有按钮为未激活状态 (暗灰色)
         for btn in self.nav_buttons.values():
-            btn.configure(fg_color="transparent", text_color="gray")
+            btn.configure(fg_color=Color.TRANSPARENT, text_color=Color.TEXT_MUTED)
 
         # 2. 高亮当前点击的按钮 (亮蓝色底，白字)
         if screen_name in self.nav_buttons:
-            self.nav_buttons[screen_name].configure(fg_color="#1F6AA5", text_color="white")
+            self.nav_buttons[screen_name].configure(fg_color=Color.PRIMARY, text_color=Color.TEXT_WHITE)
 
         # 3. 通知右侧的“屏幕大管家”切换页面
         if hasattr(self.master, "screen_manager"):
@@ -192,8 +193,8 @@ class Navigation(ctk.CTkFrame):
         return _rgb_to_hex(mixed)
 
     def _set_button_text_colors(self, ratio):
-        inactive = self._blend_hex("#525252", "#9a9a9a", ratio)
-        active = self._blend_hex("#8db7d8", "#ffffff", ratio)
+        inactive = self._blend_hex(Color.NAV_TEXT_INACTIVE_START, Color.NAV_TEXT_INACTIVE_END, ratio)
+        active = self._blend_hex(Color.NAV_TEXT_ACTIVE_START, Color.NAV_TEXT_ACTIVE_END, ratio)
         for item in self.nav_config:
             btn = self.nav_buttons[item["screen"]]
             if item["screen"] == self.current_screen:

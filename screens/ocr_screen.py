@@ -17,6 +17,7 @@ from PIL import Image, ImageTk
 from docx import Document
 
 from components.ui.button import Button
+from config.settings import Color
 from config.api_key_store import load_google_api_key
 
 class OcrState(Enum):
@@ -28,7 +29,7 @@ class OcrState(Enum):
 
 class OCRScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
-        super().__init__(master, fg_color="transparent", **kwargs)
+        super().__init__(master, fg_color=Color.TRANSPARENT, **kwargs)
         self.master = master
         self.google_api_key = os.getenv("GOOGLE_VISION_API_KEY", "").strip()
 
@@ -65,7 +66,7 @@ class OCRScreen(ctk.CTkFrame):
         self.paned_window = tk.PanedWindow(
             self, 
             orient="horizontal", 
-            bg="#1a1a1a",
+            bg=Color.BG_MAIN_DARK,
             sashwidth=8,
             sashrelief="flat",
             sashcursor="sb_h_double_arrow",
@@ -78,17 +79,17 @@ class OCRScreen(ctk.CTkFrame):
         
         ctk.CTkLabel(self.left_frame, text="📁 史料文件库", font=("Arial", 16, "bold")).pack(pady=10)
         
-        list_container = ctk.CTkFrame(self.left_frame, fg_color="transparent")
+        list_container = ctk.CTkFrame(self.left_frame, fg_color=Color.TRANSPARENT)
         list_container.pack(fill="both", expand=True, padx=5, pady=5)
         
         self.file_list_frame = ctk.CTkScrollableFrame(
             list_container,
-            fg_color="#2b2b2b",
+            fg_color=Color.BG_PANEL,
             corner_radius=8
         )
         self.file_list_frame.pack(fill="both", expand=True)
 
-        list_action_frame = ctk.CTkFrame(self.left_frame, fg_color="transparent")
+        list_action_frame = ctk.CTkFrame(self.left_frame, fg_color=Color.TRANSPARENT)
         list_action_frame.pack(fill="x", padx=8, pady=(0, 10))
 
         Button(
@@ -108,7 +109,7 @@ class OCRScreen(ctk.CTkFrame):
         self.mid_frame = ctk.CTkFrame(self.paned_window, corner_radius=10)
         self.paned_window.add(self.mid_frame, minsize=400, stretch="always")
         
-        toolbar = ctk.CTkFrame(self.mid_frame, fg_color="transparent")
+        toolbar = ctk.CTkFrame(self.mid_frame, fg_color=Color.TRANSPARENT)
         toolbar.pack(fill="x", pady=5, padx=5)
         
         Button(toolbar, text="➖ 缩小", width=60, height=30, command=self.zoom_out).pack(side="left", padx=5)
@@ -120,7 +121,7 @@ class OCRScreen(ctk.CTkFrame):
         Button(toolbar, text="◀ 上一页", width=80, height=30, command=self.prev_page).pack(side="left", padx=5)
         Button(toolbar, text="▶ 下一页", width=80, height=30, command=self.next_page).pack(side="left", padx=5)
         
-        self.canvas = tk.Canvas(self.mid_frame, bg="#2b2b2b", highlightthickness=0, cursor="hand2")
+        self.canvas = tk.Canvas(self.mid_frame, bg=Color.BG_PANEL, highlightthickness=0, cursor="hand2")
         self.canvas.pack(fill="both", expand=True, padx=5, pady=5)
         
         self.canvas.bind("<ButtonPress-1>", self.on_drag_start)
@@ -135,8 +136,8 @@ class OCRScreen(ctk.CTkFrame):
         self.btn_start_ocr = Button(
             self.action_frame,
             text="开始 OCR 识别",
-            fg_color="#15803d",
-            hover_color="#166534",
+            fg_color=Color.BTN_SUCCESS,
+            hover_color=Color.BTN_SUCCESS_HOVER,
             height=36,
             command=self.start_ocr_recognition
         )
@@ -145,8 +146,8 @@ class OCRScreen(ctk.CTkFrame):
         self.btn_force_reocr = Button(
             self.action_frame,
             text="🔄 强制重新识别",
-            fg_color="#1d4ed8",
-            hover_color="#1e40af",
+            fg_color=Color.BTN_PRIMARY_ALT,
+            hover_color=Color.BTN_PRIMARY_ALT_HOVER,
             height=36,
             command=self.force_re_recognize
         )
@@ -155,8 +156,8 @@ class OCRScreen(ctk.CTkFrame):
         self.btn_cancel_ocr = Button(
             self.action_frame,
             text="取消任务",
-            fg_color="#b45309",
-            hover_color="#92400e",
+            fg_color=Color.BTN_WARNING,
+            hover_color=Color.BTN_WARNING_HOVER,
             height=36,
             command=self.cancel_ocr_task
         )
@@ -165,8 +166,8 @@ class OCRScreen(ctk.CTkFrame):
         self.btn_clear_current_cache = Button(
             self.action_frame,
             text="🗑️ 删除当前缓存",
-            fg_color="#6b7280",
-            hover_color="#4b5563",
+            fg_color=Color.BG_BUTTON_MUTED,
+            hover_color=Color.BG_BUTTON_MUTED_HOVER,
             height=36,
             command=self.clear_current_file_cache
         )
@@ -175,8 +176,8 @@ class OCRScreen(ctk.CTkFrame):
         self.btn_clear_cache = Button(
             self.action_frame,
             text="🗑️ 删除全部缓存",
-            fg_color="#4b5563",
-            hover_color="#374151",
+            fg_color=Color.BG_BUTTON_MUTED_HOVER,
+            hover_color=Color.BG_BUTTON_NEUTRAL_HOVER,
             height=36,
             command=self.clear_ocr_cache
         )
@@ -184,7 +185,7 @@ class OCRScreen(ctk.CTkFrame):
 
         self.btn_export = Button(
             self.action_frame, text="💾 确认并导出文档",
-            fg_color="#1F6AA5", hover_color="#144870",
+            fg_color=Color.PRIMARY, hover_color=Color.PRIMARY_HOVER,
             height=40, command=self.export_document
         )
         self.btn_export.pack(pady=(6, 14), padx=12, fill="x")
@@ -208,7 +209,7 @@ class OCRScreen(ctk.CTkFrame):
 
         ctk.CTkLabel(self.right_frame, text="📝 OCR 文字校对区", font=("Arial", 16, "bold")).pack(pady=10)
 
-        text_page_toolbar = ctk.CTkFrame(self.right_frame, fg_color="transparent")
+        text_page_toolbar = ctk.CTkFrame(self.right_frame, fg_color=Color.TRANSPARENT)
         text_page_toolbar.pack(fill="x", padx=10, pady=(0, 6))
 
         Button(text_page_toolbar, text="◀ 上一页", width=80, height=30, command=self.prev_ocr_page).pack(side="left", padx=(0, 6))
@@ -311,7 +312,7 @@ class OCRScreen(ctk.CTkFrame):
             self.file_list_frame,
             text=f"正在加载文件列表 (0/{total})...",
             font=("Arial", 12),
-            text_color="#aeb7c2",
+            text_color=Color.TEXT_HINT_SOFT,
             anchor="w"
         )
         self._list_loading_label.pack(fill="x", padx=6, pady=(8, 4), side="bottom")
@@ -332,14 +333,14 @@ class OCRScreen(ctk.CTkFrame):
                     self.file_list_frame,
                     text=display_text,
                     font=("Arial", 12),
-                    fg_color="transparent",
-                    hover_color="#383d45",
-                    text_color="#d7dbe1",
+                    fg_color=Color.TRANSPARENT,
+                    hover_color=Color.BG_LIST_ITEM_HOVER,
+                    text_color=Color.TEXT_HINT,
                     anchor="w",
                     height=34,
-                    corner_radius=12,
+                    corner_radius=16,
                     border_width=1,
-                    border_color="#333842",
+                    border_color=Color.BORDER_LIST_ITEM,
                     state="disabled" if self.current_ocr_state == OcrState.RUNNING else "normal",
                     command=lambda i=list_index: self.on_file_select(i)
                 )
@@ -419,19 +420,19 @@ class OCRScreen(ctk.CTkFrame):
         for idx, btn in enumerate(self.file_item_buttons):
             if idx == self.selected_file_index:
                 btn.configure(
-                    fg_color="#4d5f73",
-                    hover_color="#566a80",
-                    text_color="white",
+                    fg_color=Color.BG_LIST_ITEM_ACTIVE,
+                    hover_color=Color.BG_LIST_ITEM_ACTIVE_HOVER,
+                    text_color=Color.TEXT_WHITE,
                     border_width=1,
-                    border_color="#8298ad"
+                    border_color=Color.BORDER_LIST_ITEM_ACTIVE
                 )
             else:
                 btn.configure(
-                    fg_color="transparent",
-                    hover_color="#383d45",
-                    text_color="#d7dbe1",
+                    fg_color=Color.TRANSPARENT,
+                    hover_color=Color.BG_LIST_ITEM_HOVER,
+                    text_color=Color.TEXT_HINT,
                     border_width=1,
-                    border_color="#333842"
+                    border_color=Color.BORDER_LIST_ITEM
                 )
 
     def open_pdf(self, file_path):
