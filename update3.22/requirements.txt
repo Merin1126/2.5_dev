@@ -1,0 +1,7 @@
+customtkinter
+google-genai
+pymupdf
+pillow
+python-docx
+requests
+selenium

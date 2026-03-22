@@ -6,8 +6,8 @@ import threading
 import hashlib
 import re
 from enum import Enum, auto
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from google import genai
+from google.genai import types
 import io
 import customtkinter as ctk
 import tkinter as tk
@@ -741,19 +741,8 @@ class OCRScreen(ctk.CTkFrame):
 
     def _detect_text_from_image(self, image_bytes, api_key):
         # 1. 配置钥匙
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=api_key)
         image = Image.open(io.BytesIO(image_bytes))
-        
-        # 🌟 核心升级：直接调取你截图中最新的 Gemini 3.1 Pro 模型
-        model = genai.GenerativeModel('gemini-3.1-pro-preview') 
-        
-        # 🛡️ 核心黑魔法：强行关闭所有现代道德审查，获取历史特权
-        safety_settings = {
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }
         
         # 📜 专属大正时代史料解析 Prompt
         academic_prompt = """你现在是一位顶尖的日本近代史学者与古籍档案解析专家。
@@ -768,9 +757,29 @@ class OCRScreen(ctk.CTkFrame):
 
         try:
             # 将安全设置和提示词一并发送给 Gemini 3.1 Pro
-            response = model.generate_content(
-                [academic_prompt, image],
-                safety_settings=safety_settings
+            response = client.models.generate_content(
+                model='gemini-3.1-pro-preview',
+                contents=[academic_prompt, image],
+                config=types.GenerateContentConfig(
+                    safety_settings=[
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                        types.SafetySetting(
+                            category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                            threshold=types.HarmBlockThreshold.BLOCK_NONE
+                        ),
+                    ]
+                )
             )
             return response.text
             
