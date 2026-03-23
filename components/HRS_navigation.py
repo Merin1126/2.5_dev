@@ -6,7 +6,7 @@ class Navigation(ctk.CTkFrame):
         # 继承原作者的深色导航栏风格
         super().__init__(master, width=84, corner_radius=0, fg_color=Color.BG_NAV_DARK, **kwargs)
         self.master = master
-        self.expanded_width = 200
+        self.expanded_width = 150
         self.collapsed_width = 84
         self.current_width = self.collapsed_width
         self.is_expanded = False

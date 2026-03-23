@@ -72,6 +72,57 @@ class OCRScreen(ctk.CTkFrame):
         self._update_ui_by_state()
         self._load_file_list()
 
+    def _build_icon_button(self, parent_frame, icon_unicode, text_str, fg_color, hover_color, command, height=36):
+        """生成支持独立控制图标和文字大小的高级按钮。"""
+        btn = Button(
+            parent_frame,
+            text="",
+            height=height,
+            fg_color=fg_color,
+            hover_color=hover_color,
+            command=command,
+        )
+
+        container = ctk.CTkFrame(btn, fg_color=Color.TRANSPARENT)
+        container.place(relx=0.5, rely=0.5, anchor="center")
+
+        btn.icon_lbl = ctk.CTkLabel(
+            container,
+            text=icon_unicode,
+            font=("Symbols Nerd Font", 20, "bold"),
+            text_color=Color.TEXT_WHITE,
+            cursor="hand2",
+        )
+        btn.icon_lbl.pack(side="left", padx=(0, 6))
+
+        btn.text_lbl = ctk.CTkLabel(
+            container,
+            text=text_str,
+            font=("Arial", 14, "bold"),
+            text_color=Color.TEXT_WHITE,
+            cursor="hand2",
+        )
+        btn.text_lbl.pack(side="left")
+
+        def _on_click(_event):
+            if btn.cget("state") == "normal":
+                command()
+
+        def _on_hover(_event):
+            if btn.cget("state") == "normal":
+                btn.configure(fg_color=hover_color)
+
+        def _on_leave(_event):
+            if btn.cget("state") == "normal":
+                btn.configure(fg_color=fg_color)
+
+        for w in [container, btn.icon_lbl, btn.text_lbl]:
+            w.bind("<Button-1>", _on_click)
+            w.bind("<Enter>", _on_hover)
+            w.bind("<Leave>", _on_leave)
+
+        return btn
+
     def _setup_ui(self):
         self.paned_window = tk.PanedWindow(
             self, 
@@ -175,65 +226,84 @@ class OCRScreen(ctk.CTkFrame):
         )
         self.model_option_menu.pack(fill="x", padx=12, pady=(0, 10))
 
-        self.btn_start_ocr = Button(
+        self.btn_start_ocr = self._build_icon_button(
             self.action_frame,
-            text="开始 OCR 识别",
-            fg_color=Color.BTN_SUCCESS,
-            hover_color=Color.BTN_SUCCESS_HOVER,
-            height=36,
-            command=self.start_ocr_recognition
+            "\U0000EAD3",
+            "开始 OCR 识别",
+            Color.BTN_SUCCESS,
+            Color.BTN_SUCCESS_HOVER,
+            self.start_ocr_recognition,
         )
         self.btn_start_ocr.pack(pady=(4, 8), padx=12, fill="x")
 
-        self.btn_force_reocr = Button(
+        self.btn_force_reocr = self._build_icon_button(
             self.action_frame,
-            text="\U0000F079 强制重新识别",
-            fontFamily="Symbols Nerd Font",
-            fg_color=Color.BTN_PRIMARY_ALT,
-            hover_color=Color.BTN_PRIMARY_ALT_HOVER,
-            height=36,
-            command=self.force_re_recognize
+            "\U0000F079",
+            "强制重新识别",
+            Color.BTN_PRIMARY_ALT,
+            Color.BTN_PRIMARY_ALT_HOVER,
+            self.force_re_recognize,
         )
         self.btn_force_reocr.pack(pady=(0, 8), padx=12, fill="x")
 
-        self.btn_cancel_ocr = Button(
+        self.btn_start_current_page = self._build_icon_button(
             self.action_frame,
-            text="取消任务",
-            fg_color=Color.BTN_WARNING,
-            hover_color=Color.BTN_WARNING_HOVER,
-            height=36,
-            command=self.cancel_ocr_task
+            "\U000F1653",
+            "仅识别当前页",
+            Color.BTN_SUCCESS_ALT,
+            Color.BTN_SUCCESS_ALT_HOVER,
+            self.start_current_page_ocr,
+        )
+        self.btn_start_current_page.pack(pady=(0, 8), padx=12, fill="x")
+
+        self.btn_reocr_current_page = self._build_icon_button(
+            self.action_frame,
+            "\U0000F079",
+            "重新识别当前页",
+            Color.BTN_PRIMARY_ALT,
+            Color.BTN_PRIMARY_ALT_HOVER,
+            self.force_reocr_current_page,
+        )
+        self.btn_reocr_current_page.pack(pady=(0, 8), padx=12, fill="x")
+
+        self.btn_cancel_ocr = self._build_icon_button(
+            self.action_frame,
+            "\U000F073A",
+            "取消任务",
+            Color.BTN_WARNING,
+            Color.BTN_WARNING_HOVER,
+            self.cancel_ocr_task,
         )
         self.btn_cancel_ocr.pack(pady=(0, 8), padx=12, fill="x")
 
-        self.btn_clear_current_cache = Button(
+        self.btn_clear_current_cache = self._build_icon_button(
             self.action_frame,
-            text="\U000F01B4 删除当前缓存",
-            fontFamily="Symbols Nerd Font",
-            fg_color=Color.BG_BUTTON_MUTED,
-            hover_color=Color.BG_BUTTON_MUTED_HOVER,
-            height=36,
-            command=self.clear_current_file_cache
+            "\U000F01B4",
+            "删除当前缓存",
+            Color.BG_BUTTON_MUTED,
+            Color.BG_BUTTON_MUTED_HOVER,
+            self.clear_current_file_cache,
         )
         self.btn_clear_current_cache.pack(pady=(0, 8), padx=12, fill="x")
 
-        self.btn_clear_cache = Button(
+        self.btn_clear_cache = self._build_icon_button(
             self.action_frame,
-            text="\U000F01B4 删除全部缓存",
-            fontFamily="Symbols Nerd Font",
-            fg_color=Color.BG_BUTTON_MUTED_HOVER,
-            hover_color=Color.BG_BUTTON_NEUTRAL_HOVER,
-            height=36,
-            command=self.clear_ocr_cache
+            "\U000F01B4",
+            "删除全部缓存",
+            Color.BG_BUTTON_MUTED_HOVER,
+            Color.BG_BUTTON_NEUTRAL_HOVER,
+            self.clear_ocr_cache,
         )
         self.btn_clear_cache.pack(pady=(0, 8), padx=12, fill="x")
 
-        self.btn_export = Button(
+        self.btn_export = self._build_icon_button(
             self.action_frame,
-            text="\U0000EA7F 确认并导出文档",
-            fontFamily="Symbols Nerd Font",
-            fg_color=Color.PRIMARY, hover_color=Color.PRIMARY_HOVER,
-            height=40, command=self.export_document
+            "\U0000EA7F",
+            "确认并导出文档",
+            Color.PRIMARY,
+            Color.PRIMARY_HOVER,
+            self.export_document,
+            height=40,
         )
         self.btn_export.pack(pady=(6, 14), padx=12, fill="x")
 
@@ -360,11 +430,29 @@ class OCRScreen(ctk.CTkFrame):
         common_state = "disabled" if is_running else "normal"
         cancel_state = "normal" if is_running else "disabled"
 
-        self.btn_start_ocr.configure(state=common_state)
-        self.btn_force_reocr.configure(state=common_state)
-        self.btn_clear_current_cache.configure(state=common_state)
-        self.btn_clear_cache.configure(state=common_state)
+        buttons_to_sync = [
+            self.btn_start_ocr,
+            self.btn_force_reocr,
+            self.btn_start_current_page,
+            self.btn_reocr_current_page,
+            self.btn_clear_current_cache,
+            self.btn_clear_cache,
+        ]
+
+        sync_color = Color.TEXT_WHITE if common_state == "normal" else Color.TEXT_HINT_SOFT
+        for btn in buttons_to_sync:
+            btn.configure(state=common_state)
+            if hasattr(btn, "icon_lbl"):
+                btn.icon_lbl.configure(text_color=sync_color)
+            if hasattr(btn, "text_lbl"):
+                btn.text_lbl.configure(text_color=sync_color)
+
         self.btn_cancel_ocr.configure(state=cancel_state)
+        cancel_sync_color = Color.TEXT_WHITE if cancel_state == "normal" else Color.TEXT_HINT_SOFT
+        if hasattr(self.btn_cancel_ocr, "icon_lbl"):
+            self.btn_cancel_ocr.icon_lbl.configure(text_color=cancel_sync_color)
+        if hasattr(self.btn_cancel_ocr, "text_lbl"):
+            self.btn_cancel_ocr.text_lbl.configure(text_color=cancel_sync_color)
 
         for btn in self.file_item_buttons:
             if btn.winfo_exists():
@@ -575,6 +663,130 @@ class OCRScreen(ctk.CTkFrame):
         self.ocr_progress_label.configure(text="OCR 状态：准备开始")
         self.ocr_progress_bar.set(0)
         self._start_ocr_worker(self.selected_pdf_path, task_id)
+
+    def start_current_page_ocr(self):
+        if not self.current_pdf or not self.selected_pdf_path:
+            messagebox.showwarning("提示", "请先在左侧选择一个 PDF 文件。")
+            return
+
+        total_pages = len(self.current_pdf)
+        page_index = self.current_page
+        cache_path = self._build_cache_path(self.selected_pdf_path)
+
+        pages_text = [""] * total_pages
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    cached_text = f.read()
+                pages_text = self._parse_cached_ocr_pages(cached_text)
+            except Exception:
+                pages_text = []
+
+        if len(pages_text) < total_pages:
+            pages_text = list(pages_text) + [""] * (total_pages - len(pages_text))
+        else:
+            pages_text = list(pages_text[:total_pages])
+
+        existing = (pages_text[page_index] or "").strip()
+        if existing and existing not in {"（本页未识别到文本）", "未识别到文本内容。"}:
+            messagebox.showinfo("提示", "当前页码已有识别记录，若想覆盖，请点击「重新识别当前页」")
+            return
+
+        self._start_single_page_worker(page_index, pages_text, total_pages)
+
+    def force_reocr_current_page(self):
+        if not self.current_pdf or not self.selected_pdf_path:
+            messagebox.showwarning("提示", "请先在左侧选择一个 PDF 文件。")
+            return
+
+        total_pages = len(self.current_pdf)
+        page_index = self.current_page
+        cache_path = self._build_cache_path(self.selected_pdf_path)
+
+        pages_text = [""] * total_pages
+        if os.path.exists(cache_path):
+            try:
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    cached_text = f.read()
+                pages_text = self._parse_cached_ocr_pages(cached_text)
+            except Exception:
+                pages_text = []
+
+        if len(pages_text) < total_pages:
+            pages_text = list(pages_text) + [""] * (total_pages - len(pages_text))
+        else:
+            pages_text = list(pages_text[:total_pages])
+
+        self._start_single_page_worker(page_index, pages_text, total_pages)
+
+    def _start_single_page_worker(self, page_index, pages_text, total_pages):
+        self._set_ocr_state(OcrState.RUNNING)
+        self.ocr_task_id += 1
+        task_id = self.ocr_task_id
+        self.ocr_progress_label.configure(text="OCR 状态：正在单页识别...")
+        self.ocr_progress_bar.set(0)
+
+        worker = threading.Thread(
+            target=self._run_single_page_worker,
+            args=(page_index, pages_text, total_pages, task_id),
+            daemon=True
+        )
+        worker.start()
+
+    def _run_single_page_worker(self, page_index, pages_text, total_pages, task_id):
+        try:
+            if not self.current_pdf or not self.selected_pdf_path:
+                raise RuntimeError("当前未加载有效的 PDF 文件。")
+
+            page = self.current_pdf[page_index]
+            pix = page.get_pixmap(matrix=fitz.Matrix(2.0, 2.0), alpha=False)
+            image_bytes = pix.tobytes("png")
+
+            api_key = (
+                os.getenv("GOOGLE_GEMINI_API_KEY", "").strip()
+                or os.getenv("GOOGLE_VISION_API_KEY", "").strip()
+                or load_gemini_api_key()
+            )
+            if not api_key:
+                raise RuntimeError("未检测到 GOOGLE_GEMINI_API_KEY。请先配置该环境变量后再使用 OCR。")
+
+            result = self._detect_text_from_image(
+                image_bytes,
+                api_key,
+                file_name=f"{os.path.basename(self.selected_pdf_path)}_第{page_index + 1}页",
+                model_name=self.selected_model_var.get(),
+            )
+
+            if task_id != self.ocr_task_id:
+                return
+
+            pages_text[page_index] = (result or "").strip() or "（本页未识别到文本）"
+            cache_path = self._build_cache_path(self.selected_pdf_path)
+            cache_payload = json.dumps({"format": "paged_v1", "pages": pages_text}, ensure_ascii=False)
+            with open(cache_path, "w", encoding="utf-8") as f:
+                f.write(cache_payload)
+
+            def _apply_single_page_success():
+                if task_id != self.ocr_task_id:
+                    return
+                self._set_ocr_pages(pages_text)
+                self.current_ocr_page_index = page_index
+                self._show_current_ocr_page()
+                self.ocr_progress_label.configure(text=f"OCR 状态：单页识别完成（第 {page_index + 1} 页）")
+                self.ocr_progress_bar.set(1)
+                self._set_ocr_state(OcrState.DONE)
+
+            self.after(0, _apply_single_page_success)
+        except Exception as e:
+            def _apply_single_page_error(err=e):
+                if task_id != self.ocr_task_id:
+                    return
+                messagebox.showerror("OCR 失败", f"单页识别失败:\n{err}")
+                self.ocr_progress_label.configure(text="OCR 状态：单页识别失败")
+                self.ocr_progress_bar.set(0)
+                self._set_ocr_state(OcrState.ERROR)
+
+            self.after(0, _apply_single_page_error)
 
     def _start_ocr_worker(self, file_path, task_id):
         worker = threading.Thread(target=self._run_ocr_worker, args=(file_path, task_id), daemon=True)
